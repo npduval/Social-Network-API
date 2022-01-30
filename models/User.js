@@ -1,9 +1,9 @@
-const { Schema, Types } = require("mongoose");
+const { Schema } = require("mongoose");
 
 
 
-const userSchema = new mongoose.Schema({
- 
+const userSchema = new Schema({
+    
     username: { 
         type: String, 
         required: true,
@@ -20,31 +20,33 @@ const userSchema = new mongoose.Schema({
             },
             message: "Please enter a valid email"
         },
-    }
+    },
       thoughts: [
         {
           type: Schema.Types.ObjectId,
-          ref: "Thoughts",
+          ref: "Thought",
         },
       ],
       friends: [
         {
           type: Schema.Types.ObjectId,
-          ref: "Users",
+          ref: "User",
         },
       ],
+    },
+    {
+        toJSON: {
+          virtuals: true,
+        }
+    });
 
+    userSchema.virtual("friendCount").get(function () {
+        return this.friends.length;
 
 });
   
+const User = model("user", userSchema);
 
+module.exports = User;
 
-
-//thoughts -  Array of `_id` values referencing the `Thought` model
-
-
-
-//friends - Array of `_id` values referencing the `User` model (self-reference)
-
-
-// Create a virtual called `friendCount` that retrieves the length of the user's `friends` array field on query.
+   
