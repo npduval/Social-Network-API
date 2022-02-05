@@ -42,32 +42,82 @@ module.exports = {
         });
     },
 
-
-
-    // Delete a course
-    deleteCourse(req, res) {
-      Course.findOneAndDelete({ _id: req.params.courseId })
-        .then((course) =>
-          !course
-            ? res.status(404).json({ message: 'No course with that ID' })
-            : Student.deleteMany({ _id: { $in: course.students } })
-        )
+    // update a thought
+    updateThought(req, res) {
+      Thought.findOneAndUpdate(
+          { _id: req.params.thoughtId },
+          {$set: req.body},
+          {new: true})
+        .then((thought) => {
+          if (!thought) {
+             res.status(404).json({ message: 'No thought with that ID' })
+          } else {
+            res.json(thought);
+          }
+        })
         .then(() => res.json({ message: 'Course and students deleted!' }))
         .catch((err) => res.status(500).json(err));
     },
+    
+    
     // Update a course
-    updateCourse(req, res) {
-      Course.findOneAndUpdate(
-        { _id: req.params.courseId },
-        { $set: req.body },
-        { runValidators: true, new: true }
-      )
-        .then((course) =>
-          !course
-            ? res.status(404).json({ message: 'No course with this id!' })
-            : res.json(course)
-        )
-        .catch((err) => res.status(500).json(err));
+    deleteThought(req, res) {
+        Thought.findOneAndDelete({ _id: req.params.thoughtId })
+          .then((thought) => {
+            if (!thought) {
+            res.status(404).json({ message: 'No thought by that ID' })
+            } else {
+             User.findOneAndUpdate(
+                    { thoughts: req.params.thoughtId },
+                    { $pull: { thoughts: req.params.thoughtId } },
+                    { new: true }
+                );
+            }
+          })
+          .then((user) => {
+              if (!user) {
+                res.status(404).json({ message: 'Thought deleted but no user by this id!' });
+            }  else {
+                res.json({ message: 'Thought deleted and user updated!' });
+            }
+        })    
+          .catch((err) => res.status(500).json(err));
     },
-  };
+        // add a new reaction
+    addReaction(req,res) {
+        Thought.findOneAndUpdate (
+            { _id: req.params.thoughtId },
+            { $addToSet: { reactions: req.body } },
+            { new: true }
+        )
+        .then((thought) => {
+            if (!thought){
+                res.status(404).json({ message: 'No thought by this id!' })
+            } else {
+                res.json(thought);
+            }
+        })
+            .catch((err) => res.status(500).json(err));
+        
+        },
+
+            //delete a reaction
+   deleteReaction( req, res) { 
+       Thought.findOneAndUpdate (
+        { _id: req.params.thoughtId },
+        { $pull: { reactions: { reactionId: req.params.reactionId } } },
+        { new: true }
+       )
+       .then((thought) => {
+           if (!thought) {
+               res.status(404).json({ message: 'No thought with this id!' });
+            } else {
+                res.json(thought)
+            }
+        })
+        .catch((err) => res.status(500).json(err));
+
+   },
+};
+  
   
