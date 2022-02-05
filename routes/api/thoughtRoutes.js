@@ -1,14 +1,10 @@
 const router = require("express").Router();
-const {
-  getAllThoughts,
-  getOneThought,
-  addThought,
-  addReaction,
-} = require("../../controllers/thoughtController.js");
 
-router.route("/").get(getAllThoughts).post(addThought);
+const {allThoughts,oneThought,addThought,addReaction} = require("../../controllers/thoughtController.js");
 
-router.route("/:id").get(getOneThought);
+router.route("/").get(allThoughts).post(addThought);
+
+router.route("/:id").get(oneThought);
 
 router.route("/:thoughtId/reactions").post(addReaction);
 
