@@ -67,20 +67,9 @@ module.exports = {
             if (!thought) {
             res.status(404).json({ message: 'No thought by that ID' })
             } else {
-             User.findOneAndUpdate(
-                    { thoughts: req.params.thoughtId },
-                    { $pull: { thoughts: req.params.thoughtId } },
-                    { new: true }
-                );
+              res.json({ message: 'Thought has been deleted' })
             }
-          })
-          .then((user) => {
-              if (!user) {
-                res.status(404).json({ message: 'Thought deleted but no user by this id!' });
-            }  else {
-                res.json({ message: 'Thought deleted and user updated!' });
-            }
-        })    
+          })   
           .catch((err) => res.status(500).json(err));
     },
         // add a new reaction
