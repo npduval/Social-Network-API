@@ -55,7 +55,6 @@ module.exports = {
             res.json(thought);
           }
         })
-        .then(() => res.json({ message: 'Course and students deleted!' }))
         .catch((err) => res.status(500).json(err));
     },
     
